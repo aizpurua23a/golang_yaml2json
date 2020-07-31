@@ -32,7 +32,7 @@ func main() {
 		//writing the file
 
 		if pastIndentLevel > indentLevel {
-			writeUnindentToJSON(indentLevel, destFile)
+			writeUnindentToJSON(pastIndentLevel, indentLevel, destFile)
 		}
 
 		if pastIndentLevel >= indentLevel {
@@ -57,7 +57,7 @@ func main() {
 		fmt.Println("Indent Level: ", indentLevel, "\tFirst Member: ", firstMember, "\tSecond Member: ", secondMember)
 	}
 
-	writeUnindentToJSON(-2, destFile)
+	writeUnindentToJSON(0, -2, destFile)
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
@@ -145,8 +145,10 @@ func getSecondMember(line string) (secondMember string) {
 func writeIndentToJSON(file *os.File)  { writeToJSON("{\n", file) }
 func writeNewLineToJSON(file *os.File) { writeToJSON(",\n", file) }
 
-func writeUnindentToJSON(indentLevel int, file *os.File) {
-	writeToJSON("\n"+strings.Repeat(" ", convertPaddingToJSON(indentLevel))+"}", file)
+func writeUnindentToJSON(pastIndentLevel int, indentLevel int, file *os.File) {
+	for i := 1; i <= (pastIndentLevel-indentLevel)/2; i++ {
+		writeToJSON("\n"+strings.Repeat(" ", convertPaddingToJSON(pastIndentLevel-2*i))+"}", file)
+	}
 }
 
 func writeSeparatorToJSON(file *os.File) { writeToJSON(": ", file) }
